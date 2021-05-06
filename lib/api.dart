@@ -1,51 +1,57 @@
-import 'dart:convert' as convert;
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:tuple/tuple.dart';
 
 import 'models.dart';
 
-const baseUrl = 'https://rickandmortyapi.com/api/';
+const url = 'https://rickandmortyapi.com/graphql/';
+var dio = Dio();
 
-Future<List<Person>> loadPersonList() async {
-  final response = await http.get(Uri.parse(baseUrl + 'character'));
-  if (response.statusCode != 200) {
+Future<Tuple2<List<Person>, int>> loadPersonList(int page) async {
+  print('Page $page');
+
+  final response = await dio.post(url, data: {
+    'query': await rootBundle.loadString('graphql/personList.gql'),
+    'variables': {'page': page},
+  });
+
+  if (response.data['data']['characters']['info'] == null ||
+      response.data['data']['characters']['results'] == null) {
     throw Exception('Failed to load');
   }
 
   List<Person> results = [];
-  List<dynamic> items = convert.jsonDecode(response.body)['results'];
-  for (final item in items) {
+  for (final item in response.data['data']['characters']['results']) {
     Person person = Person();
     person.id = item['id'];
     person.name = item['name'];
     person.status = item['status'];
-    person.url = item['url'];
     person.image = item['image'];
     results.add(person);
   }
 
-  return results;
+  return Tuple2(
+      results, response.data['data']['characters']['info']['next'] ?? -1);
 }
 
-Future<PersonDetails> loadPersonDetails(int id) async {
-  final response = await http.get(Uri.parse(baseUrl + 'character/$id'));
-  if (response.statusCode != 200) {
+Future<PersonDetails> loadPersonDetails(String id) async {
+  final response = await dio.post(url, data: {
+    'query': await rootBundle.loadString('graphql/personDetails.gql'),
+    'variables': {'id': id},
+  });
+
+  if (response.data['data']['character'] == null) {
     throw Exception('Failed to load');
   }
 
-  final item = convert.jsonDecode(response.body);
+  final item = response.data['data']['character'];
   final person = PersonDetails();
   person.id = item['id'];
   person.name = item['name'];
   person.avatar = item['image'];
-  person.locationName = item['location']['name'];
-  person.locationUrl = item['location']['url'];
   person.status = item['status'];
-  person.created = item['created'];
-  person.type = item['type'];
   person.gender = item['gender'];
   person.species = item['species'];
   person.originName = item['origin']['name'];
-  person.originUrl = item['origin']['url'];
-  //  person.episodes = item['episode'];
   return person;
 }

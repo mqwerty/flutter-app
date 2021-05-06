@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/theme.dart';
 
 import 'api.dart';
 import 'models.dart';
+import 'theme.dart';
 
 const textNormal = TextStyle(fontSize: 16.0);
 const textBold = TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600);
 
 class PersonDetailsScreen extends StatefulWidget {
-  final int id;
+  final String id;
 
   PersonDetailsScreen({Key? key, required this.id}) : super(key: key);
 
@@ -17,7 +17,7 @@ class PersonDetailsScreen extends StatefulWidget {
 }
 
 class _State extends State<PersonDetailsScreen> {
-  final int id;
+  final String id;
   PersonDetails? person;
   bool loading = true;
 

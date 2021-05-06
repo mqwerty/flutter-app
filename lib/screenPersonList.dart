@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app/theme.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'api.dart';
 import 'models.dart';
+import 'theme.dart';
 import 'screenPersonDetails.dart';
 
 class PersonListScreen extends StatefulWidget {
@@ -18,19 +17,26 @@ class PersonListScreen extends StatefulWidget {
 
 class _State extends State<PersonListScreen> {
   List<Person> persons = [];
+  var nextPage = 1;
+  var loadingError = false;
 
   void load() async {
+    if (nextPage == -1) return;
     try {
-      final res = await loadPersonList();
+      final res = await loadPersonList(nextPage);
       setState(() {
-        this.persons = res;
+        nextPage = res.item2;
+        persons.addAll(res.item1);
+        loadingError = false;
       });
     } on Exception {
-      EasyLoading.showError('Ошибка загрузки');
+      setState(() {
+        loadingError = true;
+      });
     }
   }
 
-  void navigateToPersonDetails(int id) {
+  void navigateToPersonDetails(String id) {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => PersonDetailsScreen(id: id)));
   }
@@ -47,11 +53,20 @@ class _State extends State<PersonListScreen> {
         title: Text(widget.title),
       ),
       body: persons.length == 0
-          ? Center(child: Text('Please, wait...'))
+          ? Loader(load: load, loadingError: loadingError)
           : ListView.separated(
               padding: EdgeInsets.all(8.0),
-              itemCount: persons.length,
-              itemBuilder: (context, i) => showPersonNew(persons[i]),
+              itemCount: persons.length + 1,
+              itemBuilder: (context, i) {
+                if (i == persons.length) {
+                  if (nextPage == -1) {
+                    return SizedBox.shrink();
+                  }
+                  load();
+                  return Loader(load: load, loadingError: loadingError);
+                }
+                return showPersonNew(persons[i]);
+              },
               separatorBuilder: (context, i) => Divider(),
             ));
 
@@ -76,4 +91,32 @@ class _State extends State<PersonListScreen> {
         ),
         onTap: () => navigateToPersonDetails(person.id),
       );
+}
+
+class Loader extends StatelessWidget {
+  final void Function() load;
+  final bool loadingError;
+
+  const Loader({Key? key, required this.loadingError, required this.load})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => loadingError
+      ? Center(
+          child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Fail to load data'),
+            ElevatedButton(
+                onPressed: load,
+                child: Text('Try again'),
+                style: ElevatedButton.styleFrom(primary: ThemeColors.primary)),
+          ],
+        ))
+      : Center(
+          child: CircularProgressIndicator(
+            semanticsLabel: 'Loading',
+            valueColor: AlwaysStoppedAnimation(ThemeColors.primary),
+          ),
+        );
 }
