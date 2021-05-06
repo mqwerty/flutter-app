@@ -83,8 +83,11 @@ class _State extends State<PersonDetailsScreen> {
                       children: [
                         Image.network(
                           person!.avatar,
+                          alignment: Alignment.topLeft,
                           fit: BoxFit.contain,
-                          width: double.infinity,
+                          width: MediaQuery.of(context).size.width > 600
+                              ? null
+                              : double.infinity,
                         ),
                         Container(
                           padding: const EdgeInsets.only(top: 16, left: 16),
@@ -123,7 +126,8 @@ class _State extends State<PersonDetailsScreen> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.only(top: 12, left: 16),
+                          padding: const EdgeInsets.only(
+                              top: 12, left: 16, bottom: 24),
                           child: Row(
                             children: [
                               Text('Origin: ', style: textBold),

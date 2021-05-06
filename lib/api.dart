@@ -8,8 +8,6 @@ const url = 'https://rickandmortyapi.com/graphql/';
 var dio = Dio();
 
 Future<Tuple2<List<Person>, int>> loadPersonList(int page) async {
-  print('Page $page');
-
   final response = await dio.post(url, data: {
     'query': await rootBundle.loadString('graphql/personList.gql'),
     'variables': {'page': page},
