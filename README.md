@@ -1,16 +1,12 @@
-# flutter_app
+# Rick and Morty App
 
-A new Flutter project.
+The Rick and Morty app based on the television show Rick and Morty.  
+You will have access to about hundreds of characters.  
+The Rick and Morty App is filled with canonical information as seen on the TV show.  
 
-## Getting Started
+Data is loaded via [Rick and Morty API](https://rickandmortyapi.com/)
 
-This project is a starting point for a Flutter application.
+# Copyright
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Rick and Morty is created by Justin Roiland and Dan Harmon for Adult Swim.
+The data and images are used without claim of ownership and belong to their respective owners.
