@@ -10,3 +10,10 @@ Data is loaded via [Rick and Morty API](https://rickandmortyapi.com/)
 
 Rick and Morty is created by Justin Roiland and Dan Harmon for Adult Swim.
 The data and images are used without claim of ownership and belong to their respective owners.
+
+# Usage
+
+- Install [Flutter](https://flutter.dev/docs/get-started/install)
+- Clone this repo and cd to repo folder
+- Install dependencies `flutter pub get`
+- Run app `flutter run`
